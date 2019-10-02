@@ -8,7 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Checkout Repository
     - uses: actions/checkout@v1
+    - name: Bump version and push tag
+      uses: anothrNick/github-tag-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V : true 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -17,10 +23,6 @@ jobs:
       run: dotnet publish Linty.CLI/Linty.CLI.csproj --runtime osx-x64 --framework netcoreapp2.1 --self-contained true --output ../Releases/OSX/
     - name: Build with dotnet for Windows
       run: dotnet publish Linty.CLI/Linty.CLI.csproj --runtime win-x64 --framework netcoreapp2.1 --self-contained true --output ../Releases/Windows/
-    - name: Bump version and push tag
-      uses: anothrNick/github-tag-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.AutoCreateRelease }}
     - uses: ncipollo/release-action@v1
       with:
         artifacts: ../Releases/OSX/,../Releases/Windows/
